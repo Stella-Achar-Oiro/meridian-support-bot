@@ -1,3 +1,15 @@
+---
+title: Meridian Support Bot
+emoji: 🛒
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+sdk_version: "6.13.0"
+python_version: "3.11"
+app_file: app.py
+pinned: false
+---
+
 # Meridian Electronics - Customer Support Bot
 
 Customer support chatbot for Meridian Electronics, built with GPT-4o-mini, the OpenAI Agents SDK, and a live MCP backend.
