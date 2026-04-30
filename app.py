@@ -192,17 +192,7 @@ FOOTER_HTML = """
 def build_app() -> gr.Blocks:
     chat_fn = create_chat_fn()
 
-    theme = gr.themes.Soft(
-        primary_hue="blue",
-        secondary_hue="slate",
-        neutral_hue="slate",
-        font=[gr.themes.GoogleFont("Inter"), "ui-sans-serif", "sans-serif"],
-    ).set(
-        button_primary_background_fill="#2b6cb0",
-        button_primary_background_fill_hover="#2c5282",
-    )
-
-    with gr.Blocks(title="Meridian Electronics Support", theme=theme) as app:
+    with gr.Blocks(title="Meridian Electronics Support") as app:
         gr.HTML(HEADER_HTML)
 
         # lambda ensures each browser tab gets its own SessionState instance.
@@ -223,7 +213,6 @@ def build_app() -> gr.Blocks:
                     None,  # user: default
                     "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=meridian&backgroundColor=2b6cb0",
                 ),
-                show_copy_button=True,
             ),
             textbox=gr.Textbox(
                 placeholder="Type your message…",
