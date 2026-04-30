@@ -13,6 +13,9 @@ Search for [REVIEW] before shipping. Each flag notes what to verify.
 """
 
 from __future__ import annotations
+from agents.mcp import MCPServerStreamableHttp
+from agents import Agent, Runner, RunConfig
+import gradio as gr
 
 import asyncio
 import os
@@ -22,9 +25,6 @@ from typing import Any
 from dotenv import load_dotenv
 load_dotenv()
 
-import gradio as gr
-from agents import Agent, Runner, RunConfig
-from agents.mcp import MCPServerStreamableHttp
 
 # [REVIEW] Secrets: OPENAI_API_KEY must be set before launch.
 # On Hugging Face Spaces, add it under Settings > Secrets. Never hard-code it.
@@ -128,7 +128,8 @@ async def _chat_turn(
         agent = make_agent(mcp_server)
 
         if session.input_list:
-            run_input = session.input_list + [{"role": "user", "content": user_message}]
+            run_input = session.input_list + \
+                [{"role": "user", "content": user_message}]
         else:
             run_input = user_message
 
@@ -188,11 +189,64 @@ FOOTER_HTML = """
 </div>
 """
 
+CUSTOM_CSS = """
+/* Chat bubble area */
+.chatbot .message-wrap { padding: 0.5rem 0.75rem; }
+
+/* User bubbles */
+.chatbot .message.user {
+    background: #1a1a2e !important;
+    color: #fff !important;
+    border-radius: 18px 18px 4px 18px !important;
+    padding: 0.65rem 1rem !important;
+    max-width: 78% !important;
+    margin-left: auto !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15) !important;
+}
+
+/* Bot bubbles */
+.chatbot .message.bot {
+    background: #f0f4ff !important;
+    color: #1a1a2e !important;
+    border-radius: 18px 18px 18px 4px !important;
+    padding: 0.65rem 1rem !important;
+    max-width: 78% !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+}
+
+/* Input textarea */
+.chatbot + * textarea, footer textarea {
+    border-radius: 12px !important;
+    border: 1.5px solid #cbd5e0 !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.95rem !important;
+    transition: border-color 0.2s !important;
+    resize: none !important;
+}
+.chatbot + * textarea:focus, footer textarea:focus {
+    border-color: #2b6cb0 !important;
+    box-shadow: 0 0 0 3px rgba(43,108,176,0.12) !important;
+    outline: none !important;
+}
+
+/* Send button */
+#component-0 button.primary, .chat-interface button.primary {
+    background: #1a1a2e !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    transition: background 0.2s !important;
+}
+#component-0 button.primary:hover, .chat-interface button.primary:hover {
+    background: #2b6cb0 !important;
+}
+"""
+
 
 def build_app() -> gr.Blocks:
     chat_fn = create_chat_fn()
 
-    with gr.Blocks(title="Meridian Electronics Support") as app:
+    with gr.Blocks(title="Meridian Electronics Support", css=CUSTOM_CSS) as app:
         gr.HTML(HEADER_HTML)
 
         # lambda ensures each browser tab gets its own SessionState instance.
@@ -207,7 +261,7 @@ def build_app() -> gr.Blocks:
             additional_outputs=[session_state],
             chatbot=gr.Chatbot(
                 label="Meridian Support",
-                placeholder="👋 Hello! Please share your email and 4-digit PIN to get started.",
+                placeholder="Hello! Please share your email and 4-digit PIN to get started.",
                 height=520,
                 avatar_images=(
                     None,  # user: default
