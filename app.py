@@ -13,16 +13,17 @@ Search for [REVIEW] before shipping. Each flag notes what to verify.
 """
 
 from __future__ import annotations
-from agents.mcp import MCPServerStreamableHttp
-from agents import Agent, Runner, RunConfig
-import gradio as gr
 
 import asyncio
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
+import gradio as gr
+from agents import Agent, Runner, RunConfig
+from agents.mcp import MCPServerStreamableHttp
 load_dotenv()
 
 
@@ -161,86 +162,10 @@ def create_chat_fn():
     return chat
 
 
-HEADER_HTML = """
-<div style="
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    padding: 1.5rem 2rem;
-    border-radius: 12px;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-">
-    <div style="font-size: 2rem;">🛒</div>
-    <div>
-        <div style="color: #fff; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em;">
-            Meridian Electronics
-        </div>
-        <div style="color: #a0aec0; font-size: 0.85rem; margin-top: 2px;">
-            Customer Support — provide your email and 4-digit PIN to get started
-        </div>
-    </div>
-</div>
-"""
-
-FOOTER_HTML = """
-<div style="text-align: center; color: #718096; font-size: 0.75rem; padding: 0.75rem 0 0.25rem;">
-    Meridian Electronics &nbsp;·&nbsp; Powered by GPT-4o-mini
-</div>
-"""
-
-CUSTOM_CSS = """
-/* Chat bubble area */
-.chatbot .message-wrap { padding: 0.5rem 0.75rem; }
-
-/* User bubbles */
-.chatbot .message.user {
-    background: #1a1a2e !important;
-    color: #fff !important;
-    border-radius: 18px 18px 4px 18px !important;
-    padding: 0.65rem 1rem !important;
-    max-width: 78% !important;
-    margin-left: auto !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15) !important;
-}
-
-/* Bot bubbles */
-.chatbot .message.bot {
-    background: #f0f4ff !important;
-    color: #1a1a2e !important;
-    border-radius: 18px 18px 18px 4px !important;
-    padding: 0.65rem 1rem !important;
-    max-width: 78% !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
-}
-
-/* Input textarea */
-.chatbot + * textarea, footer textarea {
-    border-radius: 12px !important;
-    border: 1.5px solid #cbd5e0 !important;
-    padding: 0.75rem 1rem !important;
-    font-size: 0.95rem !important;
-    transition: border-color 0.2s !important;
-    resize: none !important;
-}
-.chatbot + * textarea:focus, footer textarea:focus {
-    border-color: #2b6cb0 !important;
-    box-shadow: 0 0 0 3px rgba(43,108,176,0.12) !important;
-    outline: none !important;
-}
-
-/* Send button */
-#component-0 button.primary, .chat-interface button.primary {
-    background: #1a1a2e !important;
-    border-radius: 10px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.02em !important;
-    transition: background 0.2s !important;
-}
-#component-0 button.primary:hover, .chat-interface button.primary:hover {
-    background: #2b6cb0 !important;
-}
-"""
+_static = Path(__file__).parent / "static"
+HEADER_HTML = (_static / "header.html").read_text()
+FOOTER_HTML = (_static / "footer.html").read_text()
+CUSTOM_CSS  = (_static / "style.css").read_text()
 
 
 def build_app() -> gr.Blocks:
