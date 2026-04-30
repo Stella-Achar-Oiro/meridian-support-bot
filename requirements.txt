@@ -1,0 +1,20 @@
+# Meridian Electronics Support Bot
+# Tested with the versions pinned below.
+# Upgrade carefully — the OpenAI Agents SDK API is still evolving.
+
+# Core agent framework (includes openai and mcp as transitive deps)
+openai-agents==0.14.8
+
+# Pinned transitive deps to avoid resolver conflicts
+openai==2.33.0
+mcp==1.27.0
+
+# Chat UI
+gradio==6.13.0
+
+# Loads .env file locally (no-op on HF Spaces where secrets are injected directly)
+python-dotenv>=1.0.0
+
+# Hugging Face Spaces runtime helper (provides HF_TOKEN env var, etc.)
+# Safe to remove if deploying outside HF Spaces.
+huggingface_hub>=0.23.0
