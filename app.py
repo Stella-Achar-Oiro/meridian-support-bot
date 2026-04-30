@@ -160,14 +160,50 @@ def create_chat_fn():
     return chat
 
 
+HEADER_HTML = """
+<div style="
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+">
+    <div style="font-size: 2rem;">🛒</div>
+    <div>
+        <div style="color: #fff; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em;">
+            Meridian Electronics
+        </div>
+        <div style="color: #a0aec0; font-size: 0.85rem; margin-top: 2px;">
+            Customer Support — provide your email and 4-digit PIN to get started
+        </div>
+    </div>
+</div>
+"""
+
+FOOTER_HTML = """
+<div style="text-align: center; color: #718096; font-size: 0.75rem; padding: 0.75rem 0 0.25rem;">
+    Meridian Electronics &nbsp;·&nbsp; Powered by GPT-4o-mini
+</div>
+"""
+
+
 def build_app() -> gr.Blocks:
     chat_fn = create_chat_fn()
 
-    with gr.Blocks(title="Meridian Electronics Support") as app:
-        gr.Markdown(
-            "# Meridian Electronics - Customer Support\n"
-            "To get started, provide your email address and 4-digit PIN."
-        )
+    theme = gr.themes.Soft(
+        primary_hue="blue",
+        secondary_hue="slate",
+        neutral_hue="slate",
+        font=[gr.themes.GoogleFont("Inter"), "ui-sans-serif", "sans-serif"],
+    ).set(
+        button_primary_background_fill="#2b6cb0",
+        button_primary_background_fill_hover="#2c5282",
+    )
+
+    with gr.Blocks(title="Meridian Electronics Support", theme=theme) as app:
+        gr.HTML(HEADER_HTML)
 
         # lambda ensures each browser tab gets its own SessionState instance.
         session_state = gr.State(lambda: SessionState())
@@ -181,18 +217,27 @@ def build_app() -> gr.Blocks:
             additional_outputs=[session_state],
             chatbot=gr.Chatbot(
                 label="Meridian Support",
-                placeholder="Your conversation will appear here.",
-                height=500,
+                placeholder="👋 Hello! Please share your email and 4-digit PIN to get started.",
+                height=520,
+                avatar_images=(
+                    None,  # user: default
+                    "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=meridian&backgroundColor=2b6cb0",
+                ),
+                show_copy_button=True,
             ),
             textbox=gr.Textbox(
-                placeholder="Type your message here...",
+                placeholder="Type your message…",
                 container=False,
+                scale=7,
             ),
+            submit_btn="Send",
             examples=None,
             # [REVIEW] cache_examples=False: setting this True would pre-run
             # the agent without an authenticated session.
             cache_examples=False,
         )
+
+        gr.HTML(FOOTER_HTML)
 
     return app
 
